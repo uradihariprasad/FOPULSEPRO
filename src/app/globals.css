@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terminal: #04070e;
+  --color-panel: #0a0f1a;
+  --color-panel-2: #0d1422;
+  --color-line: #16203a;
+  --color-line-bright: #243656;
+  --color-ink: #e6edf7;
+  --color-ink-dim: #8b9dbd;
+  --color-ink-faint: #5b6d8f;
+  --color-profit: #34d399;
+  --color-loss: #fb7185;
+  --color-warn: #fbbf24;
+  --color-info: #38bdf8;
+  --color-violet-glow: #a78bfa;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html,
+body {
+  background: var(--color-terminal);
+  color: var(--color-ink);
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(56, 189, 248, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 10% -10%, rgba(167, 139, 250, 0.05), transparent 55%),
+    linear-gradient(rgba(22, 32, 58, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 32, 58, 0.25) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #070b14;
+}
+::-webkit-scrollbar-thumb {
+  background: #1d2a47;
+  border-radius: 6px;
+  border: 2px solid #070b14;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2c3d63;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.01em;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.86); }
+}
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes scanflow {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.flow-line {
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.55), transparent);
+  background-size: 200% 100%;
+  animation: scanflow 2.6s linear infinite;
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(15, 22, 38, 0.85), rgba(8, 12, 22, 0.92));
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+}
+
+.panel-hover {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+.panel-hover:hover {
+  border-color: var(--color-line-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px -18px rgba(56, 189, 248, 0.35);
+}
+
+.chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--color-line-bright);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table-row-hover:hover {
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.meter-track {
+  background: #101a30;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+input[type="number"],
+input[type="text"] {
+  outline: none;
+}
+
+/* ------------------------------ mobile polish ---------------------------- */
+
+/* Sticky first column for wide scrollable tables (Stage-1 tape, option chain) */
+.tape-table th:first-child,
+.tape-table td:first-child {
+  position: sticky;
+  left: 0;
+  background: #0a0f19;
+  z-index: 2;
+}
+.tape-table tbody tr:hover td:first-child {
+  background: #0d1526;
+}
+
+.scrollable-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+
+.scrollable-x::-webkit-scrollbar {
+  height: 5px;
+}
+
+/* ---------- mobile data-table infrastructure ------------------------------
+ * Wide tables (Stage-1 tape, reversal radar, option chain) keep ALL columns
+ * on mobile by scrolling horizontally, with a sticky header and a sticky
+ * first column so the symbol is always visible, plus a swipe hint that fades
+ * out once the user has scrolled.
+ * ----------------------------------------------------------------------- */
+.dt-wrap {
+  position: relative;
+}
+
+.dt {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dt thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #0a0f1a;
+}
+
+/* sticky first column */
+.dt th:first-child,
+.dt td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #0a0f1a;
+}
+.dt thead th:first-child {
+  z-index: 4; /* header cell corner sits above both axes */
+}
+.dt tbody tr:hover td:first-child {
+  background: #0d1526;
+}
+
+/* swipe hint — hidden on desktop and after the user scrolls */
+.dt-hint {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .dt-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--color-ink-faint);
+    padding: 2px 2px 6px;
+    letter-spacing: 0.04em;
+  }
+  .dt-hint.is-hidden {
+    display: none;
+  }
+  .dt-hint svg {
+    animation: swipe-x 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes swipe-x {
+  0%, 100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(7px); opacity: 1; }
+}
+
+/* Smoothly scrollable rows on touch */
+@media (pointer: coarse) {
+  .dt tbody tr:active td {
+    background: rgba(56, 189, 248, 0.06);
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    background-size: auto, auto, 36px 36px, 36px 36px;
+  }
+  .panel {
+    border-radius: 11px;
+  }
+}
+
+/* Ensure buttons and links are comfortably tappable on touch devices */
+@media (pointer: coarse) {
+  button,
+  a {
+    min-height: 34px;
+  }
+}

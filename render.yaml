@@ -1,0 +1,34 @@
+# Render.com Blueprint — F&O Pulse (NSE Intraday Scanner & Trade Setup Engine)
+#
+# Deploy in one click:
+#   1. Push this repo to GitHub/GitLab.
+#   2. Render Dashboard → New → Blueprint → select the repo.
+#   3. Render provisions the web service + PostgreSQL and links DATABASE_URL.
+#   4. Open the app → "Connect Upstox" → paste your daily access token.
+#
+# Schema is auto-bootstrapped at server start (idempotent, src/db/ensure-schema.ts).
+
+services:
+  - type: web
+    name: fo-pulse
+    runtime: node
+    plan: starter # free plan works but may sleep; starter keeps the scanner alive
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fo-pulse-db
+          property: connectionString
+      - key: ENABLE_KEEPALIVE
+        value: "true"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+
+databases:
+  - name: fo-pulse-db
+    plan: free
+    postgresMajorVersion: "16"
